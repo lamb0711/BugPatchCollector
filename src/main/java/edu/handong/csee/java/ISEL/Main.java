@@ -20,8 +20,8 @@ public class Main {
 	public static void main(String args[]) {
 		try {
 
-			//File directory = new File("/Users/imseongbin/documents/Java/ThreadExamples");
-			File directory = new File(".");
+			//File directory = new File(".");
+			File directory = new File("/Users/imseongbin/documents/Java/ChatCounter");
 			Git git = Git.init().setDirectory(directory).call();
 			// Git git =
 			// Git.init().setDirectory("/Users/imseongbin/documents/Java/ThreadExamples").call();
@@ -55,14 +55,15 @@ public class Main {
 
 				}
 			}/**/
-			recur(directory.toString(), repository);
+			String[] gitignoreList = null; //여기 수정 예정.
+			recur(directory.toString(), repository, gitignoreList);
 			
 		} catch (Exception e) {
 			e.fillInStackTrace();
 		}
 	}
 	
-	public static void recur(String directory, Repository repository) throws GitAPIException {
+	public static void recur(String directory, Repository repository, String[] gitignoreList) throws GitAPIException {
 		
 		/*
 		System.out.println("우선여기 @@@@@" + directory);
@@ -72,6 +73,19 @@ public class Main {
 		
 
 		String[] list = new File(directory).list();
+		if (list == null) {
+			throw new IllegalStateException("Did not find any files at " + new File(directory).getAbsolutePath());
+		}
+		
+		
+		
+		
+		/* 여기 for문 안에서 file이 .gitignore파일에 존재하는 파일인지 체크하고 그렇다면 continue해야함
+		 * .gitignore에서는 3가지 패턴
+		 * (1) *.class	-> first star
+		 * (2) example*	-> last star
+		 * (3) file.tmp	-> exact file name
+		 */
 		for (String file : list) {
 			
 			String nfile = directory + "/" +file.toString();
@@ -80,14 +94,14 @@ public class Main {
 			
 			if (new File(nfile).isDirectory()) {
 				System.out.println("call recur");
-				recur(nfile,repository);
+				recur(nfile,repository,gitignoreList);
 			}
 			/*else {
 				System.out.println("file: \""+file+"\"");
 			}*/
 			
 			
-			else {
+			else if(nfile.contains(".class")){
 				System.out.println("Blaming " + nfile);
 				final BlameResult result = new Git(repository).blame().setFilePath(nfile).call();
 				final RawText rawText = result.getResultContents();
