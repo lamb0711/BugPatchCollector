@@ -20,16 +20,21 @@ public class Main {
 	public static void main(String args[]) {
 		try {
 
-			//File directory = new File(".");
-			File directory = new File("/Users/imseongbin/documents/Java/ChatCounter");
-			Git git = Git.init().setDirectory(directory).call();
-			// Git git =
+			File directory = new File("/Users/imseongbin/documents/Java/BugPatchCollector");
+			//File directory = new File("/Users/imseongbin/documents/Java/BugPatchCollector/src/main/java/edu/handong/csee/java/ISEL");
+			Git git = Git.open(directory);
+			//Git git = Git.init().setDirectory(directory).call();
 			// Git.init().setDirectory("/Users/imseongbin/documents/Java/ThreadExamples").call();
 
+			//git.b;
+			
 			Repository repository = git.getRepository();
 			
-			/*
-			final String[] list = directory.list();
+			File ndirectory = new File("/Users/imseongbin/documents/Java/BugPatchCollector/src/main/java/edu/handong/csee/java/ISEL"); //수정중..
+			
+			
+			
+			final String[] list = ndirectory.list();
 			for (String file : list) {
 				System.out.println(file.toString());
 			}
@@ -56,7 +61,7 @@ public class Main {
 				}
 			}/**/
 			String[] gitignoreList = null; //여기 수정 예정.
-			recur(directory.toString(), repository, gitignoreList);
+			//recur(directory.toString(), repository, gitignoreList);
 			
 		} catch (Exception e) {
 			e.fillInStackTrace();
@@ -90,18 +95,15 @@ public class Main {
 			
 			String nfile = directory + "/" +file.toString();
 			
-			System.out.println("File: " + nfile);
+			//System.out.println("File: " + nfile);
 			
 			if (new File(nfile).isDirectory()) {
-				System.out.println("call recur");
+				//System.out.println("call recur");
 				recur(nfile,repository,gitignoreList);
 			}
-			/*else {
-				System.out.println("file: \""+file+"\"");
-			}*/
 			
 			
-			else if(nfile.contains(".class")){
+			else  if(nfile.contains(".java") && !nfile.contains("Test")){ //여기도 수정 필요.
 				System.out.println("Blaming " + nfile);
 				final BlameResult result = new Git(repository).blame().setFilePath(nfile).call();
 				final RawText rawText = result.getResultContents();
