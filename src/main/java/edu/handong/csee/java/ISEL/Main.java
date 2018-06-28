@@ -35,21 +35,19 @@ public class Main {
 			
 			
 			final String[] list = ndirectory.list();
-			for (String file : list) {
-				System.out.println(file.toString());
-			}
-			
 			
 			if (list == null) {
 				throw new IllegalStateException("Did not find any files at " + new File(".").getAbsolutePath());
 			} 
 			for (String file : list) {
+				String nfile = "src/main/java/edu/handong/csee/java/ISEL" + "/"+ file;
+				
 				if (new File(file).isDirectory()) {
 					continue;
 				}
-				System.out.println("Blaming " + file);
-				final BlameResult result = new Git(repository).blame().setFilePath(file).call();
-				final RawText rawText = result.getResultContents();
+				System.out.println("Blaming " + nfile);
+				BlameResult result = new Git(repository).blame().setFilePath(nfile).call();
+				RawText rawText = result.getResultContents();
 				for (int i = 0; i < rawText.size(); i++) {
 					final PersonIdent sourceAuthor = result.getSourceAuthor(i);
 					final RevCommit sourceCommit = result.getSourceCommit(i);
